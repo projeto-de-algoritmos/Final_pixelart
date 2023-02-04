@@ -12,9 +12,11 @@ BLOCK_SIZE = 2                  # tamanho do block
 ROWS = WIDTH // BLOCK_SIZE      # quantidade de linhas
 COLUMNS = HEIGHT // BLOCK_SIZE
 RANDOM_BFS = True               # muda o efeito de preenchimento da BFS
-RANDOM_DFS = True               # muda o efeito de preenchimento da DFS
+RANDOM_DFS = True
+WATERMARK = True               # muda o efeito de preenchimento da DFS
 TAXA_COR = 2                    # muda a frequencia com que cada cor é alterada, quanto maior, mais cores aparecerão (melhor efeito entre 16 e 100)
 vertices = []
+marcaDAgua = "DIGITE A MARCA D'ÁGUA: "
 
 '''CORES'''
 RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
@@ -31,8 +33,10 @@ display = pygame.display.set_mode((menu_x, menu_y))
 clock = pygame.time.Clock()
 pygame.display.set_caption("PixelArt")
 pygame.mixer.music.load('assets/bgsong.mp3')
-# pygame.mixer.music.play(-1)
+pygame.mixer.music.play(-1)
 
+initial_art = pygame.image.load('assets/img/bfs_random_false.png').convert_alpha()
+initial_art = pygame.transform.scale(initial_art,(menu_x, menu_y))
 
 '''MENUS'''
 def draw_text(text, font, color, scr, x, y):
@@ -97,15 +101,15 @@ def draw_resolution_menu():
 
 def draw_options_menu():
   pygame.display.update()
-  global BLOCK_SIZE, ALG_RUN, TAXA_COR, RANDOM_BFS, RANDOM_DFS, USE_RANDOM_COLOR, ROWS, COLUMNS
+  global BLOCK_SIZE, ALG_RUN, TAXA_COR, RANDOM_BFS, RANDOM_DFS, USE_RANDOM_COLOR, ROWS, COLUMNS, WATERMARK
   b, d, s, n = "BFS", "DFS", "Sim", "Não"
   
   while True:
     
     display.fill(CIAN)
-    font40 = pygame.font.Font('assets/title-font.ttf', 50)
-    font20 = pygame.font.Font('assets/title-font.ttf', 20)
-    font24 = pygame.font.Font('assets/title-font.ttf', 24)
+    font40 = pygame.font.Font('assets/title-font.ttf', 40)
+    font20 = pygame.font.Font('assets/title-font.ttf', 16)
+    font24 = pygame.font.Font('assets/title-font.ttf', 20)
     font_obs = pygame.font.Font('assets/title-font.ttf', 17)
     draw_text("Opções:", font40, WHITE, display, 330, 55)
     draw_text("K/L Tamanho do pixel:", font24, GREEN, display, 330, 115)
@@ -113,15 +117,18 @@ def draw_options_menu():
     draw_text("(K = -   L = +)", font_obs, RED, display, 330, 145)
     draw_text("B/D Algoritmo usado: ", font24, GREEN, display, 330, 185)
     draw_text(f"{b if not ALG_RUN else d}", font24, WHITE, display, 525, 185)
-    draw_text(",/. Taxa de mudança de cor: ", font24, GREEN, display, 330, 235)
-    draw_text(f"{TAXA_COR}", font24, WHITE, display, 545, 235)
-    draw_text("(, = -   . = +)", font_obs, RED, display, 330, 265)
-    draw_text("S/N Usar busca aleatória:", font24, GREEN, display, 330, 305)
-    draw_text(f"{s if (RANDOM_DFS and ALG_RUN) or (RANDOM_BFS and not ALG_RUN) else n}", font24, WHITE, display, 560, 305)
-    draw_text("(Melhores efeitos)", font_obs, RED, display, 330, 335)
-    draw_text("G/H Usar cores aleatórias", font24, GREEN, display, 320, 375)
-    draw_text(f"{s if USE_RANDOM_COLOR else n}", font24, WHITE, display, 560, 375)
-    draw_text("(G = Não   H = Sim)", font_obs, RED, display, 330, 405)
+    draw_text(",/. Taxa de mudança de cor: ", font24, GREEN, display, 330, 225)
+    draw_text(f"{TAXA_COR}", font24, WHITE, display, 545, 225)
+    draw_text("(, = -   . = +)", font_obs, RED, display, 330, 255)
+    draw_text("S/N Usar busca aleatória:", font24, GREEN, display, 330, 285)
+    draw_text(f"{s if (RANDOM_DFS and ALG_RUN) or (RANDOM_BFS and not ALG_RUN) else n}", font24, WHITE, display, 560, 285)
+    draw_text("(Melhores efeitos)", font_obs, RED, display, 330, 315)
+    draw_text("G/H Usar cores aleatórias", font24, GREEN, display, 320, 355)
+    draw_text(f"{s if USE_RANDOM_COLOR else n}", font24, WHITE, display, 560, 355)
+    draw_text("(G = Não   H = Sim)", font_obs, RED, display, 330, 375)
+    draw_text("W/E Deseja gerar a partir de uma marca d'água ?", font_obs, GREEN, display, 330, 400)
+    draw_text(f"{s if WATERMARK else n}", font24, WHITE, display, 560, 355)
+    draw_text("(W = Não   E = Sim)", font_obs, RED, display, 330, 425)
     draw_text("V - Voltar", font20, WHITE, display, 100, 440)
     draw_text("R - Resolução", font20, WHITE, display, 600, 440)
     
@@ -171,6 +178,14 @@ def draw_options_menu():
         if event.key == pygame.K_g:
           USE_RANDOM_COLOR = False
           pygame.display.update()
+        if event.key == pygame.K_w:
+          WATERMARK = False
+          pygame.display.update()
+          draw_start_menu()
+        if event.key == pygame.K_e:
+          WATERMARK = True
+          pygame.display.update()
+          watermark_input()
     
     ROWS = WIDTH // BLOCK_SIZE
     COLUMNS = HEIGHT // BLOCK_SIZE    
@@ -223,14 +238,14 @@ def draw_main_menu():
   pygame.display.update()
   display = pygame.display.set_mode((menu_x, menu_y))
   while True:
-    display.fill(CIAN)
-    font70 = pygame.font.Font('assets/title-font.ttf', 70)
-    font40 = pygame.font.Font('assets/title-font.ttf', 40)
+    display.blit(initial_art, (0,0))
+    font80 = pygame.font.Font('assets/Championship.ttf', 80)
+    font35 = pygame.font.Font('assets/Championship.ttf', 35)
     
-    draw_text("PixelGraphArt", font70, WHITE, display, 360, 150)
-    draw_text("Clique na tela para iniciar", font40, GREEN, display, 360, 250)
-    draw_text("O - Opções", font40, YELLOW, display, 360, 320)
-    draw_text("S - Sair", font40, RED, display, 360, 380)
+    draw_text("PIXEL GRAPH ART", font80, WHITE, display, 360, 150)
+    draw_text("CLIQUE NA TELA PARA INICIAR", font35, WHITE, display, 360, 260)
+    draw_text("O - OPÇÕES", font35, WHITE, display, 150, 420)
+    draw_text("S - SAIR", font35, WHITE, display, 590, 420)
 
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -246,6 +261,46 @@ def draw_main_menu():
         draw_start_menu()
 
     pygame.display.update()
+
+def watermark_input():
+    pygame.display.update()
+    global marcaDAgua
+    display = pygame.display.set_mode((WIDTH, HEIGHT))
+    text_font = pygame.font.Font(None, 32)
+    fim_aug = True
+    make_grid()
+    FPS = 20
+    while True:
+      clock.tick(FPS)
+      display.fill(CIAN)
+      font40 = pygame.font.Font('assets/Championship.ttf', 30)
+      font22 = pygame.font.Font('assets/Championship.ttf', 20)
+      draw_text(marcaDAgua, font40, WHITE, display, 260, 50)
+      draw_text("ENTER - CONFIRMAR", font22, WHITE, display, 150, 420)
+      draw_text("SPACE - SAIR", font22, WHITE, display, 590, 420)
+
+      for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+          pygame.quit()
+          sys.exit()
+        if event.type == pygame.KEYUP:
+          #if event.key == pygame.K_KP_ENTER:
+            #screenshot = pygame.Surface((WIDTH, HEIGHT))
+            #screenshot.blit(display, (0, 0))
+            #pygame.image.save(screenshot, "print.png")
+          if event.key == pygame.K_SPACE:
+            fim_aug = True
+            reset()
+            draw_main_menu()
+        if event.type == pygame.KEYDOWN:
+          if event.key == pygame.K_BACKSPACE:
+            marcaDAgua = marcaDAgua[:-1]
+          else:
+            marcaDAgua += event.unicode 
+      if fim_aug:         
+        pygame.display.update()
+      text_surface = text_font.render(marcaDAgua,True,(255,255,255))
+      display.blit(text_surface, (0,0))
 
 class Vortex:
   def __init__(self, row, col, width, display) -> None:
