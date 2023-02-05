@@ -457,8 +457,8 @@ def bellman_ford(node):
   distancia[node.id] = 0
 
   for _ in range(graph_len - 1):
-    for source in vertices.neighbours:
-      destiny = random.choice(vertices.neighbours)
+    for source in node.neighbours:
+      destiny = random.choice(source.neighbours)
       if distancia[source] != float("inf") and distancia[source] + 1 < distancia[destiny]:
         distancia[destiny] = distancia[source] + 1
 
