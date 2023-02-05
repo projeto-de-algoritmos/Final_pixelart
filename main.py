@@ -5,8 +5,8 @@ import random
 """CONFIGURAÇÔES"""
 WIDTH = 720                     # tamanho da tela(quanto maior, mais lento)
 HEIGHT = 480
-ALG_RUN = False                 # True = DFS      False = FFS
-USE_RANDOM_COLOR = False
+ALG_RUN = 1                 # 1 = BFS      2 = DFS     3 = Bellman-Ford 
+USE_RANDOM_COLOR = True
 menu_x, menu_y = 720, 480
 BLOCK_SIZE = 2                  # tamanho do block
 ROWS = WIDTH // BLOCK_SIZE      # quantidade de linhas
@@ -17,7 +17,9 @@ WATERMARK = True               # muda o efeito de preenchimento da DFS
 TAXA_COR = 2                    # muda a frequencia com que cada cor é alterada, quanto maior, mais cores aparecerão (melhor efeito entre 16 e 100)
 vertices = []
 RANDOM_BELLMAN_FORD = True
-#marcaDAgua = "DIGITE A MARCA D'ÁGUA: "
+ALG = 'BFS'
+RANDOM_SEARCH_ANSWER = 'Sim'
+marcaDAgua = "DIGITE A MARCA D'ÁGUA: "
 
 '''CORES'''
 RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
@@ -102,7 +104,7 @@ def draw_resolution_menu():
 
 def draw_options_menu():
   pygame.display.update()
-  global BLOCK_SIZE, ALG_RUN, TAXA_COR, RANDOM_BFS, RANDOM_DFS, USE_RANDOM_COLOR, ROWS, COLUMNS, WATERMARK
+  global BLOCK_SIZE, ALG_RUN, TAXA_COR, RANDOM_BFS, RANDOM_DFS, USE_RANDOM_COLOR, ROWS, COLUMNS, WATERMARK, RANDOM_BELLMAN_FORD, ALG, RANDOM_SEARCH_ANSWER
   b, d, s, n, f = "BFS", "DFS", "Sim", "Não", "Bellman-Ford"
   
   while True:
@@ -112,23 +114,24 @@ def draw_options_menu():
     font20 = pygame.font.Font('assets/title-font.ttf', 16)
     font24 = pygame.font.Font('assets/title-font.ttf', 20)
     font_obs = pygame.font.Font('assets/title-font.ttf', 17)
+
     draw_text("Opções:", font40, WHITE, display, 330, 55)
     draw_text("K/L Tamanho do pixel:", font24, GREEN, display, 330, 115)
     draw_text(f"{BLOCK_SIZE}", font24, WHITE, display, 510, 115)
     draw_text("(K = -   L = +)", font_obs, RED, display, 330, 145)
     draw_text("B/D/F Algoritmo usado: ", font24, GREEN, display, 330, 185) #dúvida pelo terceiro algoritmo que tá entrando...
-    draw_text(f"{b if not ALG_RUN else d}", font24, WHITE, display, 525, 185)
+    draw_text(f"{ALG}", font24, WHITE, display, 580, 185)
     draw_text(",/. Taxa de mudança de cor: ", font24, GREEN, display, 330, 225)
     draw_text(f"{TAXA_COR}", font24, WHITE, display, 545, 225)
     draw_text("(, = -   . = +)", font_obs, RED, display, 330, 255)
     draw_text("S/N Usar busca aleatória:", font24, GREEN, display, 330, 285)
-    draw_text(f"{s if (RANDOM_DFS and ALG_RUN) or (RANDOM_BFS and not ALG_RUN) else n}", font24, WHITE, display, 560, 285)
+    draw_text(f"{RANDOM_SEARCH_ANSWER}", font24, WHITE, display, 560, 285)
     draw_text("(Melhores efeitos)", font_obs, RED, display, 330, 315)
     draw_text("G/H Usar cores aleatórias", font24, GREEN, display, 320, 355)
     draw_text(f"{s if USE_RANDOM_COLOR else n}", font24, WHITE, display, 560, 355)
     draw_text("(G = Não   H = Sim)", font_obs, RED, display, 330, 375)
     draw_text("W/E Deseja gerar a partir de uma marca d'água ?", font_obs, GREEN, display, 330, 400)
-    draw_text(f"{s if WATERMARK else n}", font24, WHITE, display, 560, 355)
+    draw_text(f"{s if WATERMARK else n}", font24, WHITE, display, 600, 400)
     draw_text("(W = Não   E = Sim)", font_obs, RED, display, 330, 425)
     draw_text("V - Voltar", font20, WHITE, display, 100, 440)
     draw_text("R - Resolução", font20, WHITE, display, 600, 440)
@@ -150,10 +153,16 @@ def draw_options_menu():
           BLOCK_SIZE -= 1 if BLOCK_SIZE > 1 else 0
           pygame.display.update()
         if event.key == pygame.K_b:
-          ALG_RUN = False
+          ALG_RUN = 1
+          ALG = 'BFS'
           pygame.display.update()
         if event.key == pygame.K_d:
-          ALG_RUN = True
+          ALG_RUN = 2
+          ALG = 'DFS'
+          pygame.display.update()
+        if event.key == pygame.K_f:
+          ALG_RUN = 3
+          ALG = 'BELLMAN-FORD'
           pygame.display.update()
         if event.key == pygame.K_PERIOD:
           TAXA_COR += 1
@@ -162,16 +171,32 @@ def draw_options_menu():
           TAXA_COR -= 1
           pygame.display.update()
         if event.key == pygame.K_s:
-          if ALG_RUN:
+          if ALG_RUN == 1:
             RANDOM_DFS = True
-          elif not ALG_RUN:
+            RANDOM_SEARCH_ANSWER = 'Sim'
+            pygame.display.update()
+          if ALG_RUN == 2:
             RANDOM_BFS = True
+            RANDOM_SEARCH_ANSWER = 'Sim'
+            pygame.display.update()
+          if ALG_RUN == 3:
+            RANDOM_BELLMAN_FORD = True
+            RANDOM_SEARCH_ANSWER = 'Sim'
+            pygame.display.update()
           pygame.display.update()
         if event.key == pygame.K_n:
-          if ALG_RUN:
+          if ALG_RUN == 1:
             RANDOM_DFS = False
-          elif not ALG_RUN:
+            RANDOM_SEARCH_ANSWER = 'Não'
+            pygame.display.update()
+          if ALG_RUN == 2:
             RANDOM_BFS = False
+            RANDOM_SEARCH_ANSWER = 'Não'
+            pygame.display.update()
+          if ALG_RUN == 3:
+            RANDOM_BELLMAN_FORD = False
+            RANDOM_SEARCH_ANSWER = 'Não'
+            pygame.display.update()
           pygame.display.update()
         if event.key == pygame.K_h:
           USE_RANDOM_COLOR = True
@@ -191,7 +216,7 @@ def draw_options_menu():
     ROWS = WIDTH // BLOCK_SIZE
     COLUMNS = HEIGHT // BLOCK_SIZE    
     pygame.display.update()
-
+  
 def draw_start_menu():
   pygame.display.update()
   display = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -219,10 +244,14 @@ def draw_start_menu():
         row = (pos[0]) // BLOCK_SIZE
         col = (pos[1]) // BLOCK_SIZE      
         
-        if ALG_RUN == 0:
-          bfs(vertices[int(row)][int(col)])
         if ALG_RUN == 1:
+          bfs(vertices[int(row)][int(col)])
+        if ALG_RUN == 2:
           dfs(vertices[int(row)][int(col)])
+        if ALG_RUN == 1:
+          bfs(vertices[int(row)][int(col)])
+        '''if ALG_RUN == 3:
+          bellman_ford(vertices[int(row)][int(col)])'''
       if event.type == pygame.KEYUP:
         if event.key == pygame.K_p:
           screenshot = pygame.Surface((WIDTH, HEIGHT))
@@ -273,7 +302,7 @@ def watermark_input():
     FPS = 20
     while True:
       clock.tick(FPS)
-      display.fill(CIAN)
+      display.fill(WHITE)
       font40 = pygame.font.Font('assets/Championship.ttf', 30)
       font22 = pygame.font.Font('assets/Championship.ttf', 20)
       draw_text(marcaDAgua, font40, WHITE, display, 260, 50)
