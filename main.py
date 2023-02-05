@@ -462,6 +462,9 @@ def bellman_ford(node):
       destiny = random.choice(source.neighbours)
       if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[destiny.id]:
         distancia[destiny.id] = distancia[source.id] + 1
+        cor = escolhe_cor(source.color)
+        RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
+        source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
   for source in node.neightoubrs:
     destiny = random.choice(node.neighbours)
