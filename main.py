@@ -20,7 +20,7 @@ id_vertice = 0
 RANDOM_BELLMAN_FORD = True
 ALG = 'BFS'
 RANDOM_SEARCH_ANSWER = 'Sim'
-marcaDAgua = "DIGITE A MARCA D'ÁGUA: "
+marcaDAgua = ''
 
 '''CORES'''
 RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
@@ -251,8 +251,8 @@ def draw_start_menu():
           dfs(vertices[int(row)][int(col)])
         if ALG_RUN == 1:
           bfs(vertices[int(row)][int(col)])
-        '''if ALG_RUN == 3:
-          bellman_ford(vertices[int(row)][int(col)])'''
+        if ALG_RUN == 3:
+          bellman_ford(vertices[int(row)][int(col)])
       if event.type == pygame.KEYUP:
         if event.key == pygame.K_p:
           screenshot = pygame.Surface((WIDTH, HEIGHT))
@@ -303,10 +303,11 @@ def watermark_input():
     FPS = 20
     while True:
       clock.tick(FPS)
-      display.fill(WHITE)
+      display.fill(BLACK)
       font40 = pygame.font.Font('assets/Championship.ttf', 30)
-      font22 = pygame.font.Font('assets/Championship.ttf', 20)
-      draw_text(marcaDAgua, font40, WHITE, display, 260, 50)
+      font22 = pygame.font.Font('assets/Championship.ttf', 20) 
+      draw_text("DIGITE A MARCA D'ÁGUA: ", font22, WHITE, display, 150, 50)
+      draw_text(marcaDAgua, font40, WHITE, display, 260, 150)
       draw_text("ENTER - CONFIRMAR", font22, WHITE, display, 150, 420)
       draw_text("SPACE - SAIR", font22, WHITE, display, 590, 420)
 
