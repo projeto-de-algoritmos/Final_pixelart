@@ -16,6 +16,7 @@ RANDOM_DFS = True
 WATERMARK = True               # muda o efeito de preenchimento da DFS
 TAXA_COR = 2                    # muda a frequencia com que cada cor é alterada, quanto maior, mais cores aparecerão (melhor efeito entre 16 e 100)
 vertices = []
+id_vertice = 0
 RANDOM_BELLMAN_FORD = True
 #marcaDAgua = "DIGITE A MARCA D'ÁGUA: "
 
@@ -304,9 +305,10 @@ def watermark_input():
       display.blit(text_surface, (0,0))
 
 class Vortex:
-  def __init__(self, row, col, width, display) -> None:
+  def __init__(self, row, col, width, display, id) -> None:
     self.row = row * width
     self.col = col * width
+    self.id = id
     self.x = row
     self.y = col
     self.color = WHITE
@@ -372,13 +374,14 @@ def escolhe_cor(cor):
   return tuple(nova_cor)
 
 def make_grid():
-  global vertices
+  global vertices, id_vertice
 
   vertices = []
   for i in range(ROWS):
     cols = []
     for j in range(COLUMNS):
-      cols.append(Vortex(i, j, WIDTH // ROWS, display))
+      cols.append(Vortex(i, j, WIDTH // ROWS, display, id_vertice // BLOCK_SIZE))
+      id_vertice += BLOCK_SIZE
     vertices.append(cols)
 
   for i in range(ROWS):
@@ -419,31 +422,22 @@ def dfs(node):
       RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
       n.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
-def bellman_ford(self, src):
+def bellman_ford(node):
+  graph_len = len(vertices)
+  distancia = [float('inf') for _ in range(graph_len ** 2)]
+  distancia[node.id] = 0
 
-        distance = [float("Inf")] * self.M
+  for _ in range(graph_len - 1):
+    for source in vertices.neighbours:
+      destiny = random.choice(vertices.neighbours)
+      if distancia[source] != float("inf") and distancia[source] + 1 < distancia[destiny]:
+        distancia[destiny] = distancia[source] + 1
 
-        distance[src] = 0
+  for source in vertices.neightoubrs:
+    destiny = random.choice(vertices.neighbours)
+    if distancia[source] != float("inf") and distancia[source] + 1 < distancia[destiny]:
+      return
 
-
-
-        for _ in range(self.M - 1):
-
-            for a, b, c in self.graph:
-
-                if distance[a] != float("Inf") and distance[a] + c < distance[b]:
-
-                    distance[b] = distance[a] + c
-
-
-
-        for a, b, c in self.graph:
-
-            if distance[a] != float("Inf") and distance[a] + c < distance[b]:
-
-                print("Graph contains negative weight cycle")
-
-                return
 
 def reset():
   for i in range(ROWS):
