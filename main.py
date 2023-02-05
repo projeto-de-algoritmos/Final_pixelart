@@ -16,7 +16,8 @@ RANDOM_DFS = True
 WATERMARK = True               # muda o efeito de preenchimento da DFS
 TAXA_COR = 2                    # muda a frequencia com que cada cor é alterada, quanto maior, mais cores aparecerão (melhor efeito entre 16 e 100)
 vertices = []
-marcaDAgua = "DIGITE A MARCA D'ÁGUA: "
+RANDOM_BELLMAN_FORD = True
+#marcaDAgua = "DIGITE A MARCA D'ÁGUA: "
 
 '''CORES'''
 RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
@@ -102,7 +103,7 @@ def draw_resolution_menu():
 def draw_options_menu():
   pygame.display.update()
   global BLOCK_SIZE, ALG_RUN, TAXA_COR, RANDOM_BFS, RANDOM_DFS, USE_RANDOM_COLOR, ROWS, COLUMNS, WATERMARK
-  b, d, s, n = "BFS", "DFS", "Sim", "Não"
+  b, d, s, n, f = "BFS", "DFS", "Sim", "Não", "Bellman-Ford"
   
   while True:
     
@@ -115,7 +116,7 @@ def draw_options_menu():
     draw_text("K/L Tamanho do pixel:", font24, GREEN, display, 330, 115)
     draw_text(f"{BLOCK_SIZE}", font24, WHITE, display, 510, 115)
     draw_text("(K = -   L = +)", font_obs, RED, display, 330, 145)
-    draw_text("B/D Algoritmo usado: ", font24, GREEN, display, 330, 185)
+    draw_text("B/D/F Algoritmo usado: ", font24, GREEN, display, 330, 185) #dúvida pelo terceiro algoritmo que tá entrando...
     draw_text(f"{b if not ALG_RUN else d}", font24, WHITE, display, 525, 185)
     draw_text(",/. Taxa de mudança de cor: ", font24, GREEN, display, 330, 225)
     draw_text(f"{TAXA_COR}", font24, WHITE, display, 545, 225)
@@ -417,6 +418,32 @@ def dfs(node):
       cor = escolhe_cor(s.color)
       RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
       n.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
+
+def bellman_ford(self, src):
+
+        distance = [float("Inf")] * self.M
+
+        distance[src] = 0
+
+
+
+        for _ in range(self.M - 1):
+
+            for a, b, c in self.graph:
+
+                if distance[a] != float("Inf") and distance[a] + c < distance[b]:
+
+                    distance[b] = distance[a] + c
+
+
+
+        for a, b, c in self.graph:
+
+            if distance[a] != float("Inf") and distance[a] + c < distance[b]:
+
+                print("Graph contains negative weight cycle")
+
+                return
 
 def reset():
   for i in range(ROWS):
