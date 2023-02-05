@@ -459,24 +459,24 @@ def dfs(node):
       RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
       n.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
-def bellman_ford(node):
-  graph_len = len(vertices)
-  distancia = [float('inf') for _ in range(graph_len ** 2)]
-  distancia[node.id] = 0
+def bellman_ford(node, graph_len):
+  dist = [float('inf') for _ in range(graph_len)]
+  dist[node.id] = 0
 
   for _ in range(graph_len - 1):
     for source in node.neighbours:
-      destiny = random.choice(source.neighbours)
-      if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[destiny.id]:
-        distancia[destiny.id] = distancia[source.id] + 1
-        cor = escolhe_cor(source.color)
-        RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
-        source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
+      for destiny in source.neighbours:
+        if dist[source.id] != float("inf") and dist[source.id] + 1 < dist[destiny.id]:
+          dist[destiny.id] = dist[source.id] + 1
+          cor = escolhe_cor(source.color)
+          RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
+          source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
   for source in node.neighbours:
-    destiny = random.choice(node.neighbours)
-    if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[destiny.id]:
-      return
+    for destiny in node.neighbours:
+      if dist[source.id] != float("inf") and dist[source.id] + 1 < dist[destiny.id]:
+        return
+
 
 
 def reset():
