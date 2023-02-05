@@ -42,6 +42,12 @@ pygame.mixer.music.play(-1)
 initial_art = pygame.image.load('assets/img/bfs_random_false.png').convert_alpha()
 initial_art = pygame.transform.scale(initial_art,(menu_x, menu_y))
 
+resolution_art = pygame.image.load('assets/img/Resolution.PNG').convert_alpha()
+resolution_art = pygame.transform.scale(resolution_art,(menu_x, menu_y))
+
+options_art = pygame.image.load('assets/img/Options.PNG').convert_alpha()
+options_art = pygame.transform.scale(options_art,(menu_x, menu_y))
+
 '''MENUS'''
 def draw_text(text, font, color, scr, x, y):
   title = font.render(text, True, color)
@@ -52,27 +58,28 @@ def draw_resolution_menu():
   global WIDTH, HEIGHT
   pygame.display.update()
   passo = 10
-  while True:
-    display.fill(CIAN)
+  while True: 
+    display.blit(resolution_art, (0,0))
+    #display.fill(CIAN)
     font40 = pygame.font.Font('assets/title-font.ttf', 50)
     font20 = pygame.font.Font('assets/title-font.ttf', 20)
     font24 = pygame.font.Font('assets/title-font.ttf', 24)
     font_obs = pygame.font.Font('assets/title-font.ttf', 17)
     draw_text("Resolução:", font40, WHITE, display, 330, 55)
     
-    draw_text("K/L Definir passo: ", font24, GREEN, display, 330, 155)
-    draw_text(f"{passo}", font24, WHITE, display, 510, 155)
-    draw_text("(K = -   L = +)", font_obs, RED, display, 330, 185)
+    draw_text("K/L Definir passo: ", font24, WHITE, display, 330, 175)
+    draw_text(f"{passo}", font24, WHITE, display, 510, 175)
+    draw_text("(K = -   L = +)", font_obs, RED, display, 330, 205)
 
-    draw_text(",/. Largura: ", font24, GREEN, display, 280, 245)
-    draw_text(f"{WIDTH}", font24, WHITE, display, 420, 245)
-    draw_text("(, = -   . = +)", font_obs, RED, display, 280, 275)
+    draw_text(",/. Largura: ", font24, WHITE, display, 280, 265)
+    draw_text(f"{WIDTH}", font24, WHITE, display, 420, 265)
+    draw_text("(, = -   . = +)", font_obs, RED, display, 330, 295)
 
-    draw_text("X/C Altura: ", font24, GREEN, display, 280, 325)
-    draw_text(f"{HEIGHT}", font24, WHITE, display, 420, 325)
-    draw_text("(X = -   C = +)", font_obs, RED, display, 260, 355)
+    draw_text("X/C Altura: ", font24, WHITE, display, 280, 345)
+    draw_text(f"{HEIGHT}", font24, WHITE, display, 420, 345)
+    draw_text("(X = -   C = +)", font_obs, RED, display, 335, 375)
 
-    draw_text("V - Voltar", font20, WHITE, display, 100, 440)
+    draw_text("V - VOLTAR", font20, WHITE, display, 100, 440)
 
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
@@ -109,33 +116,33 @@ def draw_options_menu():
   b, d, s, n, f = "BFS", "DFS", "Sim", "Não", "Bellman-Ford"
   
   while True:
-    
-    display.fill(CIAN)
+    #display.fill(CIAN)
+    display.blit(options_art, (0,0))
     font40 = pygame.font.Font('assets/title-font.ttf', 40)
     font20 = pygame.font.Font('assets/title-font.ttf', 16)
     font24 = pygame.font.Font('assets/title-font.ttf', 20)
     font_obs = pygame.font.Font('assets/title-font.ttf', 17)
 
-    draw_text("Opções:", font40, WHITE, display, 330, 55)
-    draw_text("K/L Tamanho do pixel:", font24, GREEN, display, 330, 115)
-    draw_text(f"{BLOCK_SIZE}", font24, WHITE, display, 510, 115)
+    draw_text("Opções:", font40, BLACK, display, 330, 55)
+    draw_text("K/L Tamanho do pixel:", font24, BLACK, display, 330, 115)
+    draw_text(f"{BLOCK_SIZE}", font24, BLACK, display, 510, 115)
     draw_text("(K = -   L = +)", font_obs, RED, display, 330, 145)
-    draw_text("B/D/F Algoritmo usado: ", font24, GREEN, display, 330, 185) #dúvida pelo terceiro algoritmo que tá entrando...
-    draw_text(f"{ALG}", font24, WHITE, display, 580, 185)
-    draw_text(",/. Taxa de mudança de cor: ", font24, GREEN, display, 330, 225)
-    draw_text(f"{TAXA_COR}", font24, WHITE, display, 545, 225)
+    draw_text("B/D/F Algoritmo usado: ", font24, BLACK, display, 330, 185) #dúvida pelo terceiro algoritmo que tá entrando...
+    draw_text(f"{ALG}", font24, BLACK, display, 580, 185)
+    draw_text(",/. Taxa de mudança de cor: ", font24, BLACK, display, 330, 225)
+    draw_text(f"{TAXA_COR}", font24, BLACK, display, 545, 225)
     draw_text("(, = -   . = +)", font_obs, RED, display, 330, 255)
-    draw_text("S/N Usar busca aleatória:", font24, GREEN, display, 330, 285)
-    draw_text(f"{RANDOM_SEARCH_ANSWER}", font24, WHITE, display, 560, 285)
+    draw_text("S/N Usar busca aleatória:", font24, BLACK, display, 330, 285)
+    draw_text(f"{RANDOM_SEARCH_ANSWER}", font24, BLACK, display, 560, 285)
     draw_text("(Melhores efeitos)", font_obs, RED, display, 330, 315)
-    draw_text("G/H Usar cores aleatórias", font24, GREEN, display, 320, 355)
-    draw_text(f"{s if USE_RANDOM_COLOR else n}", font24, WHITE, display, 560, 355)
+    draw_text("G/H Usar cores aleatórias", font24, BLACK, display, 320, 355)
+    draw_text(f"{s if USE_RANDOM_COLOR else n}", font24, BLACK, display, 560, 355)
     draw_text("(G = Não   H = Sim)", font_obs, RED, display, 330, 375)
-    draw_text("W/E Deseja gerar a partir de uma marca d'água ?", font_obs, GREEN, display, 330, 400)
+    '''draw_text("W/E Deseja gerar a partir de uma marca d'água ?", font_obs, GREEN, display, 330, 400)
     draw_text(f"{s if WATERMARK else n}", font24, WHITE, display, 600, 400)
-    draw_text("(W = Não   E = Sim)", font_obs, RED, display, 330, 425)
-    draw_text("V - Voltar", font20, WHITE, display, 100, 440)
-    draw_text("R - Resolução", font20, WHITE, display, 600, 440)
+    draw_text("(W = Não   E = Sim)", font_obs, RED, display, 330, 425)'''
+    draw_text("V - Voltar", font20, BLACK, display, 100, 440)
+    draw_text("R - Resolução", font20, BLACK, display, 600, 440)
     
     
     for event in pygame.event.get():
@@ -209,10 +216,10 @@ def draw_options_menu():
           WATERMARK = False
           pygame.display.update()
           draw_start_menu()
-        if event.key == pygame.K_e:
+        '''if event.key == pygame.K_e:
           WATERMARK = True
           pygame.display.update()
-          watermark_input()
+          watermark_input()'''
     
     ROWS = WIDTH // BLOCK_SIZE
     COLUMNS = HEIGHT // BLOCK_SIZE    
@@ -466,7 +473,7 @@ def bellman_ford(node):
         RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
         source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
-  for source in node.neightoubrs:
+  for source in node.neighbours:
     destiny = random.choice(node.neighbours)
     if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[destiny.id]:
       return
