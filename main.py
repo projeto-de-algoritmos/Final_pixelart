@@ -6,19 +6,17 @@ import random
 WIDTH = 720                     # tamanho da tela(quanto maior, mais lento)
 HEIGHT = 480
 ALG_RUN = 1                 # 1 = BFS      2 = DFS     3 = Bellman-Ford 
-USE_RANDOM_COLOR = True
+USE_RANDOM_COLOR = False
 menu_x, menu_y = 720, 480
-BLOCK_SIZE = 15                 # tamanho do block
+BLOCK_SIZE = 8                 # tamanho do block
 ROWS = WIDTH // BLOCK_SIZE      # quantidade de linhas
 COLUMNS = HEIGHT // BLOCK_SIZE
 RANDOM_BFS = True               # muda o efeito de preenchimento da BFS
 RANDOM_DFS = True
-WATERMARK = True               # muda o efeito de preenchimento da DFS
 TAXA_COR = 2                    # muda a frequencia com que cada cor é alterada, quanto maior, mais cores aparecerão (melhor efeito entre 16 e 100)
 vertices = []
 lin_vertices = []
 id_vertice = 0
-RANDOM_BELLMAN_FORD = True
 ALG = 'BFS'
 RANDOM_SEARCH_ANSWER = 'Sim'
 marcaDAgua = ''
@@ -37,8 +35,8 @@ pygame.init()
 display = pygame.display.set_mode((menu_x, menu_y))
 clock = pygame.time.Clock()
 pygame.display.set_caption("PixelArt")
-# pygame.mixer.music.load('assets/bgsong.mp3')
-# pygame.mixer.music.play(-1)
+pygame.mixer.music.load('assets/bgsong.mp3')
+pygame.mixer.music.play(-1)
 
 initial_art = pygame.image.load('assets/img/bfs_random_false.png').convert_alpha()
 initial_art = pygame.transform.scale(initial_art,(menu_x, menu_y))
@@ -113,7 +111,7 @@ def draw_resolution_menu():
 
 def draw_options_menu():
   pygame.display.update()
-  global BLOCK_SIZE, ALG_RUN, TAXA_COR, RANDOM_BFS, RANDOM_DFS, USE_RANDOM_COLOR, ROWS, COLUMNS, WATERMARK, RANDOM_BELLMAN_FORD, ALG, RANDOM_SEARCH_ANSWER
+  global BLOCK_SIZE, ALG_RUN, TAXA_COR, RANDOM_BFS, RANDOM_DFS, USE_RANDOM_COLOR, ROWS, COLUMNS, RANDOM_BELLMAN_FORD, ALG, RANDOM_SEARCH_ANSWER
   b, d, s, n, f = "BFS", "DFS", "Sim", "Não", "Bellman-Ford"
   
   while True:
@@ -139,9 +137,6 @@ def draw_options_menu():
     draw_text("G/H Usar cores aleatórias", font24, BLACK, display, 320, 355)
     draw_text(f"{s if USE_RANDOM_COLOR else n}", font24, BLACK, display, 560, 355)
     draw_text("(G = Não   H = Sim)", font_obs, RED, display, 330, 375)
-    '''draw_text("W/E Deseja gerar a partir de uma marca d'água ?", font_obs, GREEN, display, 330, 400)
-    draw_text(f"{s if WATERMARK else n}", font24, WHITE, display, 600, 400)
-    draw_text("(W = Não   E = Sim)", font_obs, RED, display, 330, 425)'''
     draw_text("V - Voltar", font20, BLACK, display, 100, 440)
     draw_text("R - Resolução", font20, BLACK, display, 600, 440)
     
@@ -214,7 +209,7 @@ def draw_options_menu():
           USE_RANDOM_COLOR = False
           pygame.display.update()
         if event.key == pygame.K_w:
-          WATERMARK = False
+          # WATERMARK = False
           pygame.display.update()
           draw_start_menu()
         '''if event.key == pygame.K_e:
@@ -230,7 +225,6 @@ def draw_start_menu():
   pygame.display.update()
   display = pygame.display.set_mode((WIDTH, HEIGHT))
   fim_aug = True
-  make_grid()
   FPS = 20
   while True:
     clock.tick(FPS)
@@ -258,7 +252,7 @@ def draw_start_menu():
         if ALG_RUN == 2:
           dfs(vertices[int(row)][int(col)])
         if ALG_RUN == 3:
-          bellman_ford(vertices[int(row)][int(col)])
+          bellman_ford(lin_vertices[0])
       if event.type == pygame.KEYUP:
         if event.key == pygame.K_p:
           screenshot = pygame.Surface((WIDTH, HEIGHT))
@@ -299,46 +293,6 @@ def draw_main_menu():
 
     pygame.display.update()
 
-def watermark_input():
-    pygame.display.update()
-    global marcaDAgua
-    display = pygame.display.set_mode((WIDTH, HEIGHT))
-    text_font = pygame.font.Font(None, 32)
-    fim_aug = True
-    make_grid()
-    FPS = 20
-    while True:
-      clock.tick(FPS)
-      display.fill(BLACK)
-      font40 = pygame.font.Font('assets/Championship.ttf', 30)
-      font22 = pygame.font.Font('assets/Championship.ttf', 20) 
-      draw_text("DIGITE A MARCA D'ÁGUA: ", font22, WHITE, display, 150, 50)
-      draw_text(marcaDAgua, font40, WHITE, display, 260, 150)
-      draw_text("ENTER - CONFIRMAR", font22, WHITE, display, 150, 420)
-      draw_text("SPACE - SAIR", font22, WHITE, display, 590, 420)
-
-      for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-          pygame.quit()
-          sys.exit()
-        if event.type == pygame.KEYUP:
-          #if event.key == pygame.K_KP_ENTER:
-            #screenshot = pygame.Surface((WIDTH, HEIGHT))
-            #screenshot.blit(display, (0, 0))
-            #pygame.image.save(screenshot, "print.png")
-          if event.key == pygame.K_SPACE:
-            fim_aug = True
-            reset()
-            draw_main_menu()
-        if event.type == pygame.KEYDOWN:
-          if event.key == pygame.K_BACKSPACE:
-            marcaDAgua = marcaDAgua[:-1]
-          else:
-            marcaDAgua += event.unicode 
-      if fim_aug:         
-        pygame.display.update()
-      text_surface = text_font.render(marcaDAgua,True,(255,255,255))
-      display.blit(text_surface, (0,0))
 
 class Vortex:
   def __init__(self, row, col, width, display, id) -> None:
@@ -460,27 +414,20 @@ def dfs(node):
       n.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
 def bellman_ford(node):
-  graph_len = len(vertices)
+  graph_len = len(lin_vertices)
   distancia = [float('inf') for _ in range(graph_len ** 2)]
+  print(graph_len)
   distancia[node.id] = 0
   node.visited = True
-  neighbours = []
 
   for vertex in lin_vertices:
-    neighbours = list(vertex.neighbours)
-
-    for source in neighbours:
-      source.visited = True
-      selected_neighbour = random.choice(neighbours)
-      neighbours.pop(0) if RANDOM_BELLMAN_FORD else None
-      id = selected_neighbour.id if RANDOM_BELLMAN_FORD else source.id
-
-      if distancia[id] != float("inf") and distancia[id] + 1 < distancia[id] and not source.visited:
-        distancia[id] = distancia[id] + 1
-      cor = escolhe_cor(source.color)
+    for source in vertex.neighbours:
+      if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[source.id] and not source.visited:
+        distancia[source.id] = distancia[source.id] + 1
+        source.visited = True 
+      cor = escolhe_cor(vertex.color)
       RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
-      selected_neighbour.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR) if  RANDOM_BELLMAN_FORD else source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
-
+      source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
 
 def reset():
@@ -491,5 +438,5 @@ def reset():
 
 
 if __name__ == '__main__':
-  
+  make_grid()
   draw_main_menu()
