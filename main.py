@@ -8,7 +8,7 @@ HEIGHT = 480
 ALG_RUN = 1                 # 1 = BFS      2 = DFS     3 = Bellman-Ford 
 USE_RANDOM_COLOR = True
 menu_x, menu_y = 720, 480
-BLOCK_SIZE = 10                 # tamanho do block
+BLOCK_SIZE = 15                 # tamanho do block
 ROWS = WIDTH // BLOCK_SIZE      # quantidade de linhas
 COLUMNS = HEIGHT // BLOCK_SIZE
 RANDOM_BFS = True               # muda o efeito de preenchimento da BFS
@@ -463,16 +463,23 @@ def bellman_ford(node):
   graph_len = len(vertices)
   distancia = [float('inf') for _ in range(graph_len ** 2)]
   distancia[node.id] = 0
-  # print(node.neighbours)
+  node.visited = True
+  neighbours = []
 
   for vertex in lin_vertices:
-    for source in vertex.neighbours:
-      # print(source.id)
-      if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[source.id]:
-        distancia[source.id] = distancia[source.id] + 1
-      cor = escolhe_cor(vertex.color)
+    neighbours = list(vertex.neighbours)
+
+    for source in neighbours:
+      source.visited = True
+      selected_neighbour = random.choice(neighbours)
+      neighbours.pop(0) if RANDOM_BELLMAN_FORD else None
+      id = selected_neighbour.id if RANDOM_BELLMAN_FORD else source.id
+
+      if distancia[id] != float("inf") and distancia[id] + 1 < distancia[id] and not source.visited:
+        distancia[id] = distancia[id] + 1
+      cor = escolhe_cor(source.color)
       RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
-      source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
+      selected_neighbour.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR) if  RANDOM_BELLMAN_FORD else source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
 
 
