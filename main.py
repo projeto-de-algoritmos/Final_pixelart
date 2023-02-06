@@ -8,7 +8,7 @@ HEIGHT = 480
 ALG_RUN = 1                 # 1 = BFS      2 = DFS     3 = Bellman-Ford 
 USE_RANDOM_COLOR = True
 menu_x, menu_y = 720, 480
-BLOCK_SIZE = 2                  # tamanho do block
+BLOCK_SIZE = 10                 # tamanho do block
 ROWS = WIDTH // BLOCK_SIZE      # quantidade de linhas
 COLUMNS = HEIGHT // BLOCK_SIZE
 RANDOM_BFS = True               # muda o efeito de preenchimento da BFS
@@ -16,6 +16,7 @@ RANDOM_DFS = True
 WATERMARK = True               # muda o efeito de preenchimento da DFS
 TAXA_COR = 2                    # muda a frequencia com que cada cor é alterada, quanto maior, mais cores aparecerão (melhor efeito entre 16 e 100)
 vertices = []
+lin_vertices = []
 id_vertice = 0
 RANDOM_BELLMAN_FORD = True
 ALG = 'BFS'
@@ -36,8 +37,8 @@ pygame.init()
 display = pygame.display.set_mode((menu_x, menu_y))
 clock = pygame.time.Clock()
 pygame.display.set_caption("PixelArt")
-pygame.mixer.music.load('assets/bgsong.mp3')
-pygame.mixer.music.play(-1)
+# pygame.mixer.music.load('assets/bgsong.mp3')
+# pygame.mixer.music.play(-1)
 
 initial_art = pygame.image.load('assets/img/bfs_random_false.png').convert_alpha()
 initial_art = pygame.transform.scale(initial_art,(menu_x, menu_y))
@@ -256,8 +257,6 @@ def draw_start_menu():
           bfs(vertices[int(row)][int(col)])
         if ALG_RUN == 2:
           dfs(vertices[int(row)][int(col)])
-        if ALG_RUN == 1:
-          bfs(vertices[int(row)][int(col)])
         if ALG_RUN == 3:
           bellman_ford(vertices[int(row)][int(col)])
       if event.type == pygame.KEYUP:
@@ -424,6 +423,7 @@ def make_grid():
   for i in range(ROWS):
     for j in range(COLUMNS):
       vertices[i][j].discover_neighbours(vertices)
+      lin_vertices.append(vertices[i][j])
 
 def bfs(node):
   queue = []
@@ -463,20 +463,17 @@ def bellman_ford(node):
   graph_len = len(vertices)
   distancia = [float('inf') for _ in range(graph_len ** 2)]
   distancia[node.id] = 0
+  # print(node.neighbours)
 
-  for _ in range(graph_len - 1):
-    for source in node.neighbours:
-      destiny = random.choice(source.neighbours)
-      if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[destiny.id]:
-        distancia[destiny.id] = distancia[source.id] + 1
-        cor = escolhe_cor(source.color)
-        RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
-        source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
+  for vertex in lin_vertices:
+    for source in vertex.neighbours:
+      # print(source.id)
+      if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[source.id]:
+        distancia[source.id] = distancia[source.id] + 1
+      cor = escolhe_cor(vertex.color)
+      RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
+      source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
-  for source in node.neighbours:
-    destiny = random.choice(node.neighbours)
-    if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[destiny.id]:
-      return
 
 
 def reset():
