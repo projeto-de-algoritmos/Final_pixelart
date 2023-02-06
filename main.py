@@ -71,11 +71,11 @@ def draw_resolution_menu():
     draw_text(f"{passo}", font24, WHITE, display, 510, 175)
     draw_text("(K = -   L = +)", font_obs, RED, display, 330, 205)
 
-    draw_text(",/. Largura: ", font24, WHITE, display, 280, 265)
+    draw_text(",/. Largura: ", font24, GREEN, display, 280, 265)
     draw_text(f"{WIDTH}", font24, WHITE, display, 420, 265)
     draw_text("(, = -   . = +)", font_obs, RED, display, 330, 295)
 
-    draw_text("X/C Altura: ", font24, WHITE, display, 280, 345)
+    draw_text("X/C Altura: ", font24, GREEN, display, 280, 345)
     draw_text(f"{HEIGHT}", font24, WHITE, display, 420, 345)
     draw_text("(X = -   C = +)", font_obs, RED, display, 335, 375)
 
@@ -459,24 +459,24 @@ def dfs(node):
       RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
       n.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
-def bellman_ford(node, graph_len):
-  dist = [float('inf') for _ in range(graph_len)]
-  dist[node.id] = 0
+def bellman_ford(node):
+  graph_len = len(vertices)
+  distancia = [float('inf') for _ in range(graph_len ** 2)]
+  distancia[node.id] = 0
 
   for _ in range(graph_len - 1):
     for source in node.neighbours:
-      for destiny in source.neighbours:
-        if dist[source.id] != float("inf") and dist[source.id] + 1 < dist[destiny.id]:
-          dist[destiny.id] = dist[source.id] + 1
-          cor = escolhe_cor(source.color)
-          RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
-          source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
+      destiny = random.choice(source.neighbours)
+      if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[destiny.id]:
+        distancia[destiny.id] = distancia[source.id] + 1
+        cor = escolhe_cor(source.color)
+        RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
+        source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
 
   for source in node.neighbours:
-    for destiny in node.neighbours:
-      if dist[source.id] != float("inf") and dist[source.id] + 1 < dist[destiny.id]:
-        return
-
+    destiny = random.choice(node.neighbours)
+    if distancia[source.id] != float("inf") and distancia[source.id] + 1 < distancia[destiny.id]:
+      return
 
 
 def reset():
