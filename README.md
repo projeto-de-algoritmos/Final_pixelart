@@ -14,19 +14,19 @@ Este projeto tem por objetivo a criação de um jogo no qual o usuário selecion
 
 ## Screenshots
 <img
-  src="screenshots/Screenshot_2022-11-21-11-22-15-137.jpeg"
+  src="assets/img/bfs_random_false.png"
   alt="Imagem 1"
   title="Imagem 1"
   style="display: inline-block; margin: 0 auto; max-width: 500px">
 
 <img
-  src="screenshots/Screenshot_2022-11-21-11-15-02-975.jpeg"
+  src="assets/img/Screenshot_2022-11-21-11-15-02-975.jpeg"
   alt="Alt text"
   title="Imagem 2"
   style="display: inline-block; margin: 0 auto; max-width: 500px">
 
 <img
-  src="screenshots/Screenshot_2022-11-21-11-05-50-633.jpeg"
+  src="assets/img/Screenshot_2022-11-21-11-05-50-633.jpeg"
   alt="Alt text"
   title="Imagem 3"
   style="display: inline-block; margin: 0 auto; max-width: 500px">
