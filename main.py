@@ -35,8 +35,8 @@ pygame.init()
 display = pygame.display.set_mode((menu_x, menu_y))
 clock = pygame.time.Clock()
 pygame.display.set_caption("PixelArt")
-pygame.mixer.music.load('assets/bgsong.mp3')
-pygame.mixer.music.play(-1)
+# pygame.mixer.music.load('assets/bgsong.mp3')
+# pygame.mixer.music.play(-1)
 
 initial_art = pygame.image.load('assets/img/bfs_random_false.png').convert_alpha()
 initial_art = pygame.transform.scale(initial_art,(menu_x, menu_y))
@@ -252,7 +252,7 @@ def draw_start_menu():
         if ALG_RUN == 2:
           dfs(vertices[int(row)][int(col)])
         if ALG_RUN == 3:
-          bellman_ford(lin_vertices[0])
+          bellman_ford(vertices[int(row)][int(col)])
       if event.type == pygame.KEYUP:
         if event.key == pygame.K_p:
           screenshot = pygame.Surface((WIDTH, HEIGHT))
@@ -416,7 +416,6 @@ def dfs(node):
 def bellman_ford(node):
   graph_len = len(lin_vertices)
   distancia = [float('inf') for _ in range(graph_len ** 2)]
-  print(graph_len)
   distancia[node.id] = 0
   node.visited = True
 
@@ -426,8 +425,7 @@ def bellman_ford(node):
         distancia[source.id] = distancia[source.id] + 1
         source.visited = True 
       cor = escolhe_cor(vertex.color)
-      RANDOM_COLOR = (random.randrange(256),random.randrange(256),random.randrange(256))
-      source.vortex(display, color=cor if not USE_RANDOM_COLOR else RANDOM_COLOR)
+      source.vortex(display, color=cor)
 
 
 def reset():
